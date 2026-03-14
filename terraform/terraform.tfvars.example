@@ -1,0 +1,15 @@
+project_id        = "my-gcp-project-id"
+region            = "us-central1"
+backend_image_url = "gcr.io/my-gcp-project-id/cost-optimizer-backend:latest"
+
+# Secrets (use TF_VAR_ env vars or a .tfvars file excluded from git)
+# openai_api_key        = "sk-..."
+# supabase_url          = "https://xxx.supabase.co"
+# supabase_key          = "eyJ..."
+# aws_access_key_id     = "AKIA..."
+# aws_secret_access_key = "..."
+
+openai_model        = "gpt-4o"
+aws_region          = "us-east-1"
+gcp_billing_dataset = "billing_export.gcp_billing_export_v1"
+cors_origins        = "https://my-frontend.example.com"

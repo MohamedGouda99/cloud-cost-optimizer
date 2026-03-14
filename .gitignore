@@ -1,0 +1,54 @@
+# ─── Environment & Secrets ──────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ─── Python ─────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# ─── Node / Frontend ───────────────────────────────────────────
+node_modules/
+frontend/dist/
+frontend/build/
+.next/
+*.tsbuildinfo
+
+# ─── Terraform ──────────────────────────────────────────────────
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/*.tfvars
+!terraform/*.tfvars.example
+terraform/.terraform.lock.hcl
+
+# ─── IDE ────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── OS ─────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Docker ─────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ─── Misc ───────────────────────────────────────────────────────
+*.log
+*.tmp
+.claude/

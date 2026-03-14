@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-gray-800;
+  }
+  body {
+    @apply bg-gray-950 text-gray-100;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-gray-800 bg-gray-900 p-5 shadow-lg;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+/* Recharts overrides for dark theme */
+.recharts-cartesian-grid line {
+  stroke: #1f2937 !important;
+}
+.recharts-text {
+  fill: #9ca3af !important;
+}
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: #111827 !important;
+  border: 1px solid #374151 !important;
+  border-radius: 0.5rem !important;
+}
