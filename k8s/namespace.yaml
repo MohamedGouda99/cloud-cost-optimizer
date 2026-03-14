@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cost-optimizer
+  labels:
+    app.kubernetes.io/name: cost-optimizer
+    app.kubernetes.io/part-of: multi-cloud-cost-optimizer

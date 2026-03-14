@@ -1,0 +1,27 @@
+Multi-Cloud Cost Optimizer has been deployed!
+
+1. Get the application URL:
+{{- if .Values.ingress.enabled }}
+  https://{{ .Values.ingress.host }}
+{{- else }}
+  Export the frontend service:
+  kubectl port-forward svc/{{ include "cost-optimizer.fullname" . }}-frontend -n {{ .Release.Namespace }} 8080:{{ .Values.frontend.service.port }}
+
+  Export the backend service:
+  kubectl port-forward svc/{{ include "cost-optimizer.fullname" . }}-backend -n {{ .Release.Namespace }} 8000:{{ .Values.backend.service.port }}
+{{- end }}
+
+2. Check pod status:
+  kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+3. View backend logs:
+  kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/component=backend -f
+
+4. Check HPA status:
+  kubectl get hpa -n {{ .Release.Namespace }}
+
+{{- if .Values.cronjob.enabled }}
+
+5. Cost sync CronJob runs at: {{ .Values.cronjob.schedule }}
+   Check CronJob status: kubectl get cronjobs -n {{ .Release.Namespace }}
+{{- end }}

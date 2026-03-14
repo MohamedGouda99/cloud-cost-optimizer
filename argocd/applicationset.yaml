@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cost-optimizer
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+            namespace: cost-optimizer-dev
+            targetRevision: develop
+            autoSync: true
+            selfHeal: true
+            prune: true
+          - env: staging
+            namespace: cost-optimizer-staging
+            targetRevision: staging
+            autoSync: true
+            selfHeal: true
+            prune: true
+          - env: prod
+            namespace: cost-optimizer
+            targetRevision: main
+            autoSync: false
+            selfHeal: true
+            prune: false
+  template:
+    metadata:
+      name: "cost-optimizer-{{env}}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/name: cost-optimizer
+        environment: "{{env}}"
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: cost-optimizer
+      source:
+        repoURL: https://github.com/your-org/cloud-cost-optimizer.git
+        targetRevision: "{{targetRevision}}"
+        path: helm/cost-optimizer
+        helm:
+          valueFiles:
+            - "../../argocd/overlays/{{env}}/values.yaml"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{namespace}}"
+      syncPolicy:
+        automated:
+          prune: "{{prune}}"
+          selfHeal: "{{selfHeal}}"
+          allowEmpty: false
+        syncOptions:
+          - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
+          - ServerSideApply=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
+      revisionHistoryLimit: 10

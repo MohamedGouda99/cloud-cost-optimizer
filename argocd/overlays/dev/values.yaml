@@ -1,0 +1,55 @@
+# Dev environment overrides
+backend:
+  replicaCount: 1
+
+  image:
+    tag: "develop"
+    pullPolicy: Always
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  autoscaling:
+    enabled: false
+
+  config:
+    OPENAI_MODEL: "gpt-3.5-turbo"
+    GCP_PROJECT_ID: "cost-optimizer-dev"
+    GCP_BILLING_DATASET: "billing_export_dev"
+    AWS_REGION: "us-east-1"
+    CORS_ORIGINS: "https://dev.cost-optimizer.example.com"
+
+frontend:
+  replicaCount: 1
+
+  image:
+    tag: "develop"
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+ingress:
+  enabled: true
+  host: dev.cost-optimizer.example.com
+  tls:
+    enabled: true
+    secretName: cost-optimizer-dev-tls
+
+cronjob:
+  enabled: false
+
+networkPolicy:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false

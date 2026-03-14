@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: cost-optimizer
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Multi-Cloud Cost Optimizer project
+  sourceRepos:
+    - "https://github.com/your-org/cloud-cost-optimizer.git"
+  destinations:
+    - namespace: cost-optimizer
+      server: https://kubernetes.default.svc
+    - namespace: cost-optimizer-staging
+      server: https://kubernetes.default.svc
+    - namespace: cost-optimizer-dev
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: ""
+      kind: "*"
+    - group: apps
+      kind: "*"
+    - group: batch
+      kind: "*"
+    - group: networking.k8s.io
+      kind: "*"
+    - group: autoscaling
+      kind: "*"
+  roles:
+    - name: admin
+      description: Full access to cost-optimizer project
+      policies:
+        - p, proj:cost-optimizer:admin, applications, *, cost-optimizer/*, allow
+      groups:
+        - cost-optimizer-admins
+    - name: readonly
+      description: Read-only access
+      policies:
+        - p, proj:cost-optimizer:readonly, applications, get, cost-optimizer/*, allow
+      groups:
+        - cost-optimizer-viewers

@@ -1,0 +1,60 @@
+# Staging environment overrides
+backend:
+  replicaCount: 2
+
+  image:
+    tag: "staging"
+    pullPolicy: Always
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 70
+
+  config:
+    OPENAI_MODEL: "gpt-4"
+    GCP_PROJECT_ID: "cost-optimizer-staging"
+    GCP_BILLING_DATASET: "billing_export_staging"
+    AWS_REGION: "us-east-1"
+    CORS_ORIGINS: "https://staging.cost-optimizer.example.com"
+
+frontend:
+  replicaCount: 2
+
+  image:
+    tag: "staging"
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+ingress:
+  enabled: true
+  host: staging.cost-optimizer.example.com
+  tls:
+    enabled: true
+    secretName: cost-optimizer-staging-tls
+
+cronjob:
+  enabled: true
+  schedule: "0 3 * * *"
+
+networkPolicy:
+  enabled: true
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1

@@ -1,0 +1,104 @@
+# Production environment overrides
+backend:
+  replicaCount: 3
+
+  image:
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: "2"
+      memory: 2Gi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+
+  config:
+    OPENAI_MODEL: "gpt-4"
+    GCP_PROJECT_ID: "cost-optimizer-prod"
+    GCP_BILLING_DATASET: "billing_export"
+    AWS_REGION: "us-east-1"
+    CORS_ORIGINS: "https://cost-optimizer.example.com"
+
+  # In production, use External Secrets Operator
+  externalSecret:
+    enabled: true
+    name: cost-optimizer-backend-external
+
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/component
+                  operator: In
+                  values:
+                    - backend
+            topologyKey: kubernetes.io/hostname
+
+frontend:
+  replicaCount: 3
+
+  image:
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/component
+                  operator: In
+                  values:
+                    - frontend
+            topologyKey: kubernetes.io/hostname
+
+ingress:
+  enabled: true
+  host: cost-optimizer.example.com
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/rate-limit-connections: "10"
+    nginx.ingress.kubernetes.io/rate-limit-rps: "50"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  tls:
+    enabled: true
+    secretName: cost-optimizer-prod-tls
+
+cronjob:
+  enabled: true
+  schedule: "0 2 * * *"
+
+networkPolicy:
+  enabled: true
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+serviceAccount:
+  create: true
+  annotations:
+    iam.gke.io/gcp-service-account: cost-optimizer@cost-optimizer-prod.iam.gserviceaccount.com

@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cost-optimizer-sync
+  namespace: cost-optimizer
+  labels:
+    app.kubernetes.io/name: cost-optimizer
+    app.kubernetes.io/component: cronjob
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      activeDeadlineSeconds: 600
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: cost-optimizer
+            app.kubernetes.io/component: cronjob
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: cost-sync
+              image: curlimages/curl:8.5.0
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  curl -sf -X POST \
+                    http://cost-optimizer-backend.cost-optimizer.svc.cluster.local:8000/api/costs/sync \
+                    -H "Content-Type: application/json" \
+                    --retry 3 \
+                    --retry-delay 10 \
+                    --max-time 300
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 32Mi
+                limits:
+                  cpu: 100m
+                  memory: 64Mi

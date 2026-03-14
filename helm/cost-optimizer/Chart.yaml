@@ -1,0 +1,16 @@
+apiVersion: v2
+name: cost-optimizer
+description: Multi-Cloud Cost Optimizer - FastAPI backend with React frontend
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - cost-optimization
+  - multi-cloud
+  - finops
+  - aws
+  - gcp
+maintainers:
+  - name: DevOps Team
+sources:
+  - https://github.com/your-org/cloud-cost-optimizer
